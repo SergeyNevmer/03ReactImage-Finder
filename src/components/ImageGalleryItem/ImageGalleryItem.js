@@ -7,7 +7,7 @@ const ImageGalleryItem = ({ src, bigSrc }) => (
     <img
       src={src}
       alt=""
-      datallargeurl={bigSrc}
+      data-largeurl={bigSrc}
       className={styles.ImageGalleryItemImage}
     />
   </li>

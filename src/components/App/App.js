@@ -1,17 +1,14 @@
 import React from "react";
-// import "./App.module.css";
 import arrImages from "../../services/imagesApi";
 import Searcbar from "../Searchbar/Searchbar";
 import ImageGallery from "../ImageGallery/ImageGallery";
 import Button from "../Button/Button";
-import Loader from "react-loader-spinner";
 
 export default class App extends React.Component {
   state = {
     images: [],
     query: "",
     page: 1,
-    isLoading: false,
   };
 
   handleChange = (e) => {
@@ -24,15 +21,13 @@ export default class App extends React.Component {
 
     if (query === "") return;
 
-    this.setState({ isLoading: true });
     arrImages(query, page)
       .then((data) =>
         this.setState({
           images: [...data],
         })
       )
-      .catch(console.log)
-      .finally(this.setState({ isLoading: false }));
+      .catch(console.log);
   };
 
   onIncrementPage = () => {
@@ -45,15 +40,13 @@ export default class App extends React.Component {
     const { page, query } = this.state;
 
     if (prevState.page !== this.state.page) {
-      this.setState({ isLoading: true });
       arrImages(query, page)
         .then((data) =>
           this.setState((prevState) => ({
             images: [...prevState.images, ...data],
           }))
         )
-        .catch(console.log)
-        .finally(this.setState({ isLoading: false }));
+        .catch(console.log);
     }
 
     window.scrollTo({
@@ -63,7 +56,7 @@ export default class App extends React.Component {
   }
 
   render() {
-    const { query, images, isLoading } = this.state;
+    const { query, images } = this.state;
     return (
       <>
         <Searcbar
@@ -71,11 +64,7 @@ export default class App extends React.Component {
           onChange={this.handleChange}
           onSubmit={this.handleSubmit}
         />
-        {isLoading ? (
-          <Loader type="TailSpin" color="#00BFFF" height={80} width={80} />
-        ) : (
-          <ImageGallery images={images} />
-        )}
+        <ImageGallery images={images} />
         {images.length > 0 && <Button onClick={this.onIncrementPage} />}
       </>
     );
