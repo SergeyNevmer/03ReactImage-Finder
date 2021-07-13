@@ -1,71 +1,47 @@
 import React from "react";
-import arrImages from "../../services/imagesApi";
 import Searcbar from "../Searchbar/Searchbar";
 import ImageGallery from "../ImageGallery/ImageGallery";
-import Button from "../Button/Button";
+import LoadMore from "../LoadMore/LoadMore";
 
 export default class App extends React.Component {
   state = {
     images: [],
-    query: "",
-    page: 1,
+    valueFromInput: "",
   };
 
   handleChange = (e) => {
-    this.setState({ query: e.target.value, page: 1 });
+    const value = e.target.value;
+    this.setState({ valueFromInput: value });
   };
 
-  handleSubmit = (e) => {
-    e.preventDefault();
-    const { query, page } = this.state;
-
-    if (query === "") return;
-
-    arrImages(query, page)
-      .then((data) =>
-        this.setState({
-          images: [...data],
-        })
-      )
-      .catch(console.log);
-  };
-
-  onIncrementPage = () => {
+  onLoadMore = (arr) => {
     this.setState((prevState) => ({
-      page: prevState.page + 1,
+      images: [...prevState.images, ...arr],
     }));
   };
 
-  componentDidUpdate(prevProps, prevState) {
-    const { page, query } = this.state;
-
-    if (prevState.page !== this.state.page) {
-      arrImages(query, page)
-        .then((data) =>
-          this.setState((prevState) => ({
-            images: [...prevState.images, ...data],
-          }))
-        )
-        .catch(console.log);
-    }
-
-    window.scrollTo({
-      top: document.documentElement.scrollHeight,
-      behavior: "smooth",
+  onGetNewImages = (newImages) => {
+    this.setState({
+      images: [],
     });
-  }
+    this.setState((prevState) => ({
+      images: [...prevState.images, ...newImages],
+    }));
+  };
 
   render() {
-    const { query, images } = this.state;
+    const { valueFromInput, images } = this.state;
     return (
       <>
         <Searcbar
-          value={query}
+          value={valueFromInput}
           onChange={this.handleChange}
-          onSubmit={this.handleSubmit}
+          onSubmit={this.onGetNewImages}
         />
         <ImageGallery images={images} />
-        {images.length > 0 && <Button onClick={this.onIncrementPage} />}
+        {images.length > 0 && (
+          <LoadMore value={valueFromInput} onClick={this.onLoadMore} />
+        )}
       </>
     );
   }

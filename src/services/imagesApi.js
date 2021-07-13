@@ -1,20 +1,16 @@
-const LINKS = {
+import axios from "axios";
+
+const refs = {
   baseUrl: "https://pixabay.com/api/",
-  apiKey: "21992403-2602b5d506ba3879747240055",
+  key: "21992403-2602b5d506ba3879747240055",
 };
 
-const fetchImages = async (searchQuery, page) => {
-  const { baseUrl, apiKey } = LINKS;
-
-  try {
-    const response = await fetch(
-      `${baseUrl}?q=${searchQuery}&page=${page}&key=${apiKey}&image_type=photo&orientation=horizontal&per_page=12`
-    );
-    const data = await response.json();
-    return data.hits;
-  } catch (error) {
-    throw error;
-  }
+const FetchImages = (searchQuery, page = 1) => {
+  return axios
+    .get(
+      `${refs.baseUrl}?q=${searchQuery}&page=${page}&key=${refs.key}&image_type=photo&orientation=horizontal&per_page=12`
+    )
+    .then((response) => response.data.hits);
 };
 
-export default fetchImages;
+export default FetchImages;
